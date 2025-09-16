@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "npx prisma generate --no-engine && tsc",
+    "build": "npx prisma migrate deploy && tsc",
     "start": "node build/index.js"
   },
   "keywords": [],
