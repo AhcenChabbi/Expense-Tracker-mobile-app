@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "npx prisma migrate deploy && tsc",
+    "build": "npx prisma generate && tsc",
     "start": "node build/index.js"
   },
   "keywords": [],
@@ -14,9 +14,6 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.16.1",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",
-    "@types/node": "^24.5.0",
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.3",
     "cors": "^2.8.5",
@@ -26,6 +23,9 @@
     "zod": "^4.1.8"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.5.0",
     "prisma": "^6.16.2"
   }
 }
