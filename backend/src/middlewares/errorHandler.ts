@@ -19,8 +19,7 @@ const handleAppError = (res: Response, error: AppError) => {
   });
 };
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  if (process.env.NODE_ENV === "development")
-    console.log(`PATH ${req.path}`, err);
+  console.log(`PATH ${req.path}`, err);
   if (err instanceof z.ZodError) {
     return handleZodError(res, err);
   }
