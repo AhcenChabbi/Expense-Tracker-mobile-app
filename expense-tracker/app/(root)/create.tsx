@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreateTransaction() {
   const {
@@ -54,7 +53,7 @@ export default function CreateTransaction() {
     });
   };
   return (
-    <SafeAreaView className="flex-1 bg-brand-100">
+    <View className="flex-1">
       <CreateTransactionHeader
         onSave={handleSubmit(onSubmit)}
         isPending={isPending}
@@ -277,6 +276,6 @@ export default function CreateTransaction() {
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

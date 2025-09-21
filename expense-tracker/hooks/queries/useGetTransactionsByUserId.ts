@@ -6,6 +6,6 @@ export default function useGetTransactionsByUserId() {
   const { userId } = useAuth();
   return useQuery({
     queryKey: ["transactions", userId],
-    queryFn: () => getTransactionsByUserId(userId!),
+    queryFn: () => getTransactionsByUserId(),
   });
 }

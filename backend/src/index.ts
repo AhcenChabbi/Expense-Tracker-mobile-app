@@ -5,6 +5,7 @@ import transactionsRoute from "./routes/transactionsRoute";
 import rateLimiter from "./middlewares/rateLimiter";
 import errorHandler from "./middlewares/errorHandler";
 import { OK } from "./constants/http";
+import { clerkMiddleware, getAuth, requireAuth } from "@clerk/express";
 const app = express();
 app.use(express.json());
 app.use(
@@ -13,8 +14,9 @@ app.use(
   })
 );
 app.use(rateLimiter);
+app.use(clerkMiddleware());
 const PORT = process.env.PORT || 3000;
-app.use("/api/transactions", transactionsRoute);
+app.use("/api/transactions", requireAuth(), transactionsRoute);
 app.use("/health", (req, res) => {
   return res.status(OK).json({ message: "Server is healthy" });
 });

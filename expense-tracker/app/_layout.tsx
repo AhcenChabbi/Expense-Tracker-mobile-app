@@ -6,14 +6,16 @@ import "../global.css";
 import QueryProvider from "@/providers/QueryProvider";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache}>
       <SafeAreaProvider>
         <QueryProvider>
-          <Slot />
+          <SafeAreaView className="flex-1">
+            <Slot />
+          </SafeAreaView>
         </QueryProvider>
         <StatusBar style="auto" />
       </SafeAreaProvider>

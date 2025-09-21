@@ -1,5 +1,5 @@
 import { useUser } from "@clerk/clerk-expo";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import LogoutButton from "./LogoutButton";
@@ -9,11 +9,16 @@ export default function Navbar() {
   return (
     <View className="flex-row items-center justify-between py-3 px-4">
       <View className="flex-row items-center gap-x-3">
-        <Image
-          source={require("../assets/images/logo.png")}
-          style={{ width: 45, height: 45 }}
-          className="rounded-full border-2 border-brand-600"
-        />
+        <View className="w-11 h-11 bg-brand-100 rounded-full items-center justify-center border-2 border-green-600">
+          {user?.imageUrl ? (
+            <Image
+              source={{ uri: user.imageUrl }}
+              className="w-full h-full rounded-full"
+            />
+          ) : (
+            <Ionicons name="person" size={44} color="#965a3e" />
+          )}
+        </View>
         <View>
           <Text
             className="text-sm font-medium text-gray-600"
@@ -22,7 +27,9 @@ export default function Navbar() {
             Welcome back,
           </Text>
           <Text className="font-bold text-lg text-brand-600" accessible={false}>
-            {user?.emailAddresses[0].emailAddress.split("@")[0]}
+            {user?.username ||
+              `${user?.firstName} ${user?.lastName}` ||
+              user?.emailAddresses[0].emailAddress.split("@")[0]}
           </Text>
         </View>
       </View>
@@ -35,7 +42,7 @@ export default function Navbar() {
             accessibilityLabel="Create new transaction"
             accessibilityHint="Navigate to create transaction screen"
           >
-            <AntDesign name="plus" size={16} color="white" />
+            <Ionicons name="add" size={16} color="white" />
             <Text className="font-semibold text-white text-sm">Create</Text>
           </TouchableOpacity>
         </Link>

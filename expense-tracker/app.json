@@ -44,6 +44,12 @@
             "backgroundColor": "#1f0f0c"
           }
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you update you profile picture"
+        }
       ]
     ],
     "experiments": {

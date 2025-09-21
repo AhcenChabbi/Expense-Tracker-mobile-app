@@ -7,10 +7,13 @@ const LogoutButton = () => {
   const { signOut } = useClerk();
   const router = useRouter();
   const handleSignOut = async () => {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
       {
-        text: "Logout",
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Sign Out",
         style: "destructive",
         onPress: async () => {
           await signOut();

@@ -3,17 +3,22 @@ import Transaction from "@/types/transactions";
 import formatDate from "@/utils/format-date";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
+import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
 import DeleteTransactionButton from "./DeleteTransactionButton";
 export default function TransactionItem({
   transaction,
+  index,
 }: {
   transaction: Transaction;
+  index: number;
 }) {
   const { amount, category, title, createdAt } = transaction;
   const iconName = CATEGORY_ICONS[category] || "pricetag-outline";
   const isIncome = amount > 0;
   return (
-    <View
+    <Animated.View
+      entering={FadeInRight.delay(index * 100)} // staggered entrance
+      exiting={FadeOutLeft}
       className="flex-row items-center bg-white justify-between px-4 py-3 rounded-xl  border-gray-100"
       accessible={true}
       accessibilityRole="button"
@@ -61,6 +66,6 @@ export default function TransactionItem({
         </View>
         <DeleteTransactionButton transaction={transaction} />
       </View>
-    </View>
+    </Animated.View>
   );
 }

@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-export default function CardSkeleton() {
+export default function SummarySkeleton() {
   return (
     <View className="px-4 mt-5">
       <View className="bg-white rounded-2xl p-5 gap-y-5 border border-gray-100 animate-pulse">

@@ -10,6 +10,5 @@ export const transactionSchema = z.object({
   amount: z
     .number({ error: "Amount is required" })
     .gt(0, { error: "Amount must be greater than 0" }),
-  userId: z.string().min(1, { message: "User ID is required" }),
 });
 export type TransactionSchema = z.infer<typeof transactionSchema>;

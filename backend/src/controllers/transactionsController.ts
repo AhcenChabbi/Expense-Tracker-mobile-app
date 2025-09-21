@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
-import { CREATED, OK } from "../constants/http";
+import { BAD_REQUEST, CREATED, OK } from "../constants/http";
 import { prisma } from "../lib/prisma";
 import { transactionSchema } from "../lib/validation";
 import catchErrors from "../utils/catchErrors";
+import { getAuth } from "@clerk/express";
+import appAssert from "../utils/appAssert";
 
 export const getSummaryByUserId = catchErrors(
   async (req: Request, res: Response) => {
-    const { userId } = req.params;
+    const { userId } = getAuth(req);
+    appAssert(userId, BAD_REQUEST, "User ID is required");
     const {
       _sum: { amount: balance },
     } = await prisma.transaction.aggregate({
@@ -51,7 +54,9 @@ export const getSummaryByUserId = catchErrors(
 
 export const createTransaction = catchErrors(
   async (req: Request, res: Response) => {
-    const { amount, category, title, transactionType, userId } =
+    const { userId } = getAuth(req);
+    appAssert(userId, BAD_REQUEST, "User ID is required");
+    const { amount, category, title, transactionType } =
       transactionSchema.parse(req.body);
     const transaction = await prisma.transaction.create({
       data: {
@@ -67,7 +72,8 @@ export const createTransaction = catchErrors(
 
 export const getTransactionsByUserId = catchErrors(
   async (req: Request, res: Response) => {
-    const { userId } = req.params;
+    const { userId } = getAuth(req);
+    appAssert(userId, BAD_REQUEST, "User ID is required");
     const transactions = await prisma.transaction.findMany({
       where: {
         userId,
@@ -82,10 +88,13 @@ export const getTransactionsByUserId = catchErrors(
 
 export const deleteTransaction = catchErrors(
   async (req: Request, res: Response) => {
+    const { userId } = getAuth(req);
+    appAssert(userId, BAD_REQUEST, "User ID is required");
     const { id } = req.params;
     const transaction = await prisma.transaction.delete({
       where: {
         id,
+        userId,
       },
     });
     return res.status(OK).json(transaction);

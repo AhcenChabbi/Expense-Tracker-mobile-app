@@ -6,6 +6,6 @@ export default function useGetSummaryByUserId() {
   const { userId } = useAuth();
   return useQuery({
     queryKey: ["summary", userId],
-    queryFn: () => getSummaryByUserId(userId!),
+    queryFn: () => getSummaryByUserId(),
   });
 }

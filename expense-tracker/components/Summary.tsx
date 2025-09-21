@@ -1,6 +1,8 @@
 import useGetSummaryByUserId from "@/hooks/queries/useGetSummaryByUserId";
 import { Text, View } from "react-native";
-import CardSkeleton from "./CardSkeleton";
+import Animated, { FadeIn } from "react-native-reanimated";
+import ErrorSummary from "./ErrorSummary";
+import SummarySkeleton from "./SummarySkeleton";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-US", {
@@ -10,16 +12,16 @@ const formatCurrency = (amount: number) => {
   }).format(Math.abs(amount));
 };
 export default function Summary() {
-  const { data, isPending, isError } = useGetSummaryByUserId();
+  const { data, isPending, isError, refetch } = useGetSummaryByUserId();
   if (isPending) {
-    return <CardSkeleton />;
+    return <SummarySkeleton />;
   }
   if (isError) {
-    return null;
+    return <ErrorSummary refetch={refetch} />;
   }
   const { balance, totalExpenses, totalIncomes } = data;
   return (
-    <View className="px-4 mt-5">
+    <Animated.View entering={FadeIn} className="px-4 mt-5">
       <View
         className="bg-white rounded-2xl p-5 gap-y-5 border border-gray-100"
         accessible={true}
@@ -34,8 +36,10 @@ export default function Summary() {
             >
               Total Balance
             </Text>
-            <Text className="text-3xl font-bold text-brand-600">
-              {formatCurrency(balance)}
+            <Text
+              className={`text-3xl font-bold ${balance > 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {`${balance !== 0 ? (balance > 0 ? "+" : "-") : ""} ${formatCurrency(balance)}`}
             </Text>
           </View>
           {balance !== 0 && (
@@ -87,6 +91,6 @@ export default function Summary() {
           </View>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 }

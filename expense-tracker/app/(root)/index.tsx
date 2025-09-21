@@ -2,10 +2,9 @@ import Navbar from "@/components/navbar";
 import RecentTransactions from "@/components/RecentTransactions";
 import Summary from "@/components/Summary";
 import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 export default function Page() {
   return (
-    <SafeAreaView className="flex-1 bg-brand-100">
+    <View className="flex-1 relative">
       <Navbar />
       <Summary />
       <View className="px-4 mt-5  flex-1">
@@ -14,6 +13,6 @@ export default function Page() {
         </Text>
         <RecentTransactions />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

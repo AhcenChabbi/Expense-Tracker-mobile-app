@@ -14,14 +14,13 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import "../../global.css";
 export default function SignUp() {
   const {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useSignUpForm();
   const [pendingVerification, setPendingVerification] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +58,7 @@ export default function SignUp() {
     if (!isLoaded) return;
 
     try {
+      setIsLoading(true);
       // Use the code the user provided to attempt verification
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
@@ -78,172 +78,208 @@ export default function SignUp() {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
+    } finally {
+      setIsLoading(false);
     }
   };
   if (pendingVerification) {
-    return <EmailVerification onVerifyPress={onVerifyPress} />;
+    return (
+      <EmailVerification onVerifyPress={onVerifyPress} isLoading={isLoading} />
+    );
   }
   return (
-    <SafeAreaView className="flex-1 bg-brand-100">
-      <KeyboardAvoidingView
-        behavior={"padding"}
-        keyboardVerticalOffset={100}
-        className="flex-1 w-full"
-      >
-        <View className="flex-1 w-full items-center justify-center gap-y-4">
-          <Image
-            source={require("../../assets/images/revenue-i2.png")}
-            resizeMode="contain"
-            accessible={true}
-            accessibilityLabel="Revenue app logo"
-            accessibilityRole="image"
-            style={{ width: 300, height: 300 }}
-          />
-          <View className="w-full px-4 gap-y-2">
+    <KeyboardAvoidingView
+      behavior={"padding"}
+      keyboardVerticalOffset={100}
+      accessible
+      enabled
+      accessibilityLabel="Sign up screen"
+      className="flex-1 w-full bg-gradient-to-br from-brand-50 via-brand-100 to-brand-200"
+    >
+      <View className="flex-1 w-full items-center justify-center gap-y-4">
+        <Image
+          source={require("../../assets/images/revenue-i2.png")}
+          resizeMode="contain"
+          accessible={true}
+          accessibilityLabel="Revenue app logo"
+          accessibilityRole="image"
+          style={{ width: 300, height: 300 }}
+        />
+        <View className="w-full px-4 gap-y-2">
+          <View className="mb-2 items-center">
             <Text
-              className="text-2xl text-center font-bold text-brand-700"
-              accessible
+              accessible={true}
+              accessibilityLabel="Welcome Back"
               accessibilityRole="header"
+              className="text-3xl font-bold text-brand-700 mb-2"
             >
               Create Account
             </Text>
-            {errors.root && (
-              <View
-                accessible={true}
-                accessibilityRole="alert"
-                accessibilityLiveRegion="assertive"
-                className="items-center justify-center w-full"
-              >
-                <Text className="text-red-600 text-base font-bold">
-                  {errors.root.message}
-                </Text>
-              </View>
-            )}
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  keyboardType="email-address"
-                  placeholder="Email"
-                  autoComplete="email"
-                  autoCapitalize="none"
-                  returnKeyType="next"
-                  accessible
-                  accessibilityLabel={
-                    errors.email
-                      ? `Email input, error: ${errors.email.message}`
-                      : "Email input"
-                  }
-                  accessibilityHint="Enter your email address to create an account"
-                  className={`px-4 py-3 border-2 ${
-                    errors.email ? "border-red-500" : "border-brand-600"
-                  } rounded-md w-full text-brand-600 bg-white text-lg dark:text-white`}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-              name="email"
-            />
-            {errors.email && (
-              <Text
-                accessibilityRole="alert"
-                accessibilityLiveRegion="polite"
-                className="text-red-500 text-sm"
-              >
-                {errors.email.message}
-              </Text>
-            )}
-
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  secureTextEntry
-                  placeholder="Password"
-                  autoCapitalize="none"
-                  returnKeyType="done"
-                  accessible
-                  accessibilityLabel={
-                    errors.password
-                      ? `Password input, error: ${errors.password.message}`
-                      : "Password input"
-                  }
-                  accessibilityHint="Enter a secure password for your account"
-                  className={`px-4 py-3 border-2 ${
-                    errors.password ? "border-red-500" : "border-brand-600"
-                  } rounded-md w-full text-brand-600 bg-white text-lg dark:text-white`}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-              name="password"
-            />
-            {errors.password && (
-              <Text
-                accessibilityRole="alert"
-                accessibilityLiveRegion="polite"
-                className="text-red-500 text-sm"
-              >
-                {errors.password.message}
-              </Text>
-            )}
-            <Pressable
-              disabled={isLoading}
-              accessibilityRole="button"
-              accessibilityLabel={
-                isLoading
-                  ? "Creating account, please wait"
-                  : "Create your account"
-              }
-              accessibilityHint={
-                isLoading
-                  ? "Account creation in progress"
-                  : "Tap to create a new account with your email and password"
-              }
-              accessibilityState={{
-                disabled: isLoading,
-                busy: isLoading,
-              }}
-              className={`w-full items-center rounded-md py-3 ${
-                isLoading ? "bg-brand-300" : "bg-brand-500"
-              }`}
-              onPress={handleSubmit(onSubmit)}
-            >
-              {isLoading ? (
-                <ActivityIndicator color={"white"} className="animate-spin" />
-              ) : (
-                <Text className="text-white font-bold text-lg">Sign Up</Text>
-              )}
-            </Pressable>
-            <View
+            <Text
               accessible={true}
               accessibilityRole="text"
-              className="flex-row items-center gap-x-2 justify-center"
+              className="text-base text-brand-500 text-center leading-relaxed"
             >
-              <Text className="text-brand-400 text dark:text-brand-100 text-base">
-                Already have an account?
+              Enter your email and password to create an account
+            </Text>
+          </View>
+          {errors.root && (
+            <View
+              accessible={true}
+              accessibilityRole="alert"
+              accessibilityLiveRegion="assertive"
+              accessibilityLabel={`Error: ${errors.root.message}`}
+              className="mb-4 p-4 bg-red-50 border border-red-200 rounded-2xl"
+            >
+              <Text className="text-red-700 text-base font-medium text-center">
+                {errors.root.message}
               </Text>
-              <Link
-                href="/sign-in"
-                className="text-brand-500 font-bold dark:text-brand-200 text-base"
-                accessibilityRole="link"
-                accessibilityLabel="Sign In"
-                accessibilityHint="Navigate to sign in page"
-              >
-                Sign In
-              </Link>
             </View>
+          )}
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                keyboardType="email-address"
+                placeholder="Enter your email"
+                autoComplete="email"
+                placeholderTextColor="#cea68d"
+                autoCapitalize="none"
+                returnKeyType="next"
+                accessible
+                accessibilityLabel={
+                  errors.email
+                    ? `Email input field, error: ${errors.email.message}`
+                    : "Email input field"
+                }
+                accessibilityHint="Enter your email address to create an account"
+                className={`px-5 py-4 border-2 ${
+                  errors.email
+                    ? "border-red-400 bg-red-50"
+                    : "border-brand-600 bg-white"
+                } rounded-xl w-full font-medium  text-base text-brand-700 dark:text-white`}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="email"
+          />
+          {errors.email && (
+            <Text
+              accessibilityRole="alert"
+              accessibilityLiveRegion="polite"
+              className="text-red-600 text-sm font-medium"
+            >
+              {errors.email.message}
+            </Text>
+          )}
+
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                secureTextEntry={true}
+                placeholder="Enter your password"
+                placeholderTextColor="#cea68d"
+                autoCapitalize="none"
+                returnKeyType="done"
+                accessible={true}
+                accessibilityLabel={
+                  errors.password
+                    ? `Password input field, error: ${errors.password.message}`
+                    : "Password input field"
+                }
+                accessibilityHint="Enter a secure password for your account"
+                className={`px-5 py-4 border-2 ${
+                  errors.email
+                    ? "border-red-400 bg-red-50"
+                    : "border-brand-600 bg-white"
+                } rounded-xl w-full font-medium  text-base text-brand-700 dark:text-white`}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="password"
+          />
+          {errors.password && (
+            <Text
+              accessibilityRole="alert"
+              accessibilityLiveRegion="polite"
+              className="text-red-600 text-sm font-medium"
+            >
+              {errors.password.message}
+            </Text>
+          )}
+          <Pressable
+            disabled={isLoading || !isValid}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isLoading
+                ? "Creating account, please wait"
+                : "Create your account"
+            }
+            accessibilityHint={
+              isLoading
+                ? "Account creation in progress"
+                : "Tap to create a new account with your email and password"
+            }
+            accessibilityState={{
+              disabled: isLoading || !isValid,
+              busy: isLoading,
+            }}
+            className={`w-full items-center rounded-2xl py-4 ${
+              isLoading || !isValid ? "bg-brand-300" : "bg-brand-500"
+            }`}
+            onPress={handleSubmit(onSubmit)}
+          >
+            {isLoading ? (
+              <View
+                className="flex-row items-center gap-x-3"
+                accessible={true}
+                accessibilityRole="progressbar"
+                accessibilityLabel="Loading"
+              >
+                <ActivityIndicator
+                  color="white"
+                  size="small"
+                  accessible={false}
+                />
+                <Text className="text-white font-semibold text-base">
+                  Signing up...
+                </Text>
+              </View>
+            ) : (
+              <Text className="text-white font-bold text-lg">Sign Up</Text>
+            )}
+          </Pressable>
+          <View
+            className="flex-row items-center justify-center mt-8"
+            accessible={true}
+            accessibilityLabel="Sign In option"
+          >
+            <Text className="text-brand-500 text-base font-medium mr-1">
+              Already have an account?
+            </Text>
+            <Link
+              href="/sign-in"
+              className="text-brand-600 font-bold text-base ml-1 underline"
+              accessibilityRole="link"
+              accessibilityLabel="Sign In"
+              accessibilityHint="Navigate to sign in page"
+            >
+              Sign In
+            </Link>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
