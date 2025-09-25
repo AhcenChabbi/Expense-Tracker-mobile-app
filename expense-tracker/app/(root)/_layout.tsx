@@ -3,12 +3,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { useColorScheme } from "react-native";
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
   fade: true,
 });
 export default function RootLayout() {
   const { isSignedIn, isLoaded } = useUser();
+  const scheme = useColorScheme();
   useEffect(() => {
     if (isLoaded) SplashScreen.hideAsync();
   }, [isLoaded]);
@@ -16,14 +18,23 @@ export default function RootLayout() {
   if (!isSignedIn) {
     return <Redirect href="/sign-in" />;
   }
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#965a3e",
+        tabBarActiveTintColor: scheme === "dark" ? "#965a3e" : "#5d3225",
+        tabBarInactiveTintColor: scheme === "dark" ? "#f3e7de" : "#cea68d",
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: "bold",
+          fontWeight: "800",
+        },
+        tabBarStyle: {
+          backgroundColor: scheme === "dark" ? "#f9fafb" : "#fdf9f7",
+          borderTopColor: scheme === "dark" ? "#1f0f0c" : "#e0c9b7",
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 6,
         },
       }}
     >
@@ -37,6 +48,15 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
+        name="create"
+        options={{
+          title: "Create",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="add-circle" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
@@ -45,18 +65,13 @@ export default function RootLayout() {
           ),
         }}
       />
-
-      <Tabs.Screen
-        name="create"
-        options={{
-          title: "Create",
-          href: null,
-        }}
-      />
       <Tabs.Screen
         name="edit-profile"
         options={{
-          href: null,
+          title: "Edit Profile",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings" size={24} color={color} />
+          ),
         }}
       />
     </Tabs>

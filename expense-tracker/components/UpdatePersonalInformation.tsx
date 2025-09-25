@@ -1,9 +1,9 @@
-import { updateUserSchema, UpdateUserSchema } from "@/lib/validation";
+import useUpdatePersonalInformationForm from "@/hooks/useUpdatePersonalInformationForm";
+import { UpdateUserSchema } from "@/lib/validation";
 import { useUser } from "@clerk/clerk-expo";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import {
   ActivityIndicator,
   Alert,
@@ -21,7 +21,7 @@ export default function UpdatePersonalInformation() {
     handleSubmit,
     formState: { errors, isValid },
     setValue,
-  } = useForm({ resolver: zodResolver(updateUserSchema) });
+  } = useUpdatePersonalInformationForm();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

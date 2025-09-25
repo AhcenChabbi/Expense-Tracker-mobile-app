@@ -1,12 +1,9 @@
-import {
-  UpdateUserPasswordSchema,
-  updateUserPasswordSchema,
-} from "@/lib/validation";
+import useChangeUserPassword from "@/hooks/useChangeUserPassword";
+import { UpdateUserPasswordSchema } from "@/lib/validation";
 import { useUser } from "@clerk/clerk-expo";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "expo-checkbox";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import {
   ActivityIndicator,
   Alert,
@@ -25,16 +22,7 @@ export default function ChangeUserPassword() {
     handleSubmit,
     formState: { errors, isValid },
     reset,
-  } = useForm({
-    resolver: zodResolver(updateUserPasswordSchema),
-    mode: "onChange",
-    defaultValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmNewPassword: "",
-      signOutOfOtherSessions: false,
-    },
-  });
+  } = useChangeUserPassword();
 
   const onSubmit = async (data: UpdateUserPasswordSchema) => {
     if (!user) return;
